@@ -6,6 +6,7 @@
 #include <QCameraImageCapture>
 #include <QPushButton>
 #include <QFrame>
+#include <QTime>
 #include <iostream>
 using namespace std;
 
@@ -106,9 +107,9 @@ rov_quad::rov_quad(QWidget *parent)
     chemin->resize(250,30);
     chemin->move(10,600);
 
-    chemin_photo=new QLineEdit(this);
-    chemin_photo->resize(250,30);
-    chemin_photo->move(10,560);
+    chemin_image=new QLineEdit(this);
+    chemin_image->resize(250,30);
+    chemin_image->move(10,560);
 
     //PIXMAP
     rec = new QLabel(this);
@@ -147,6 +148,12 @@ rov_quad::~rov_quad(){
 
 }
 
+int rov_quad::randInt(int low, int high)
+{
+// Random number between low and high
+return qrand() % ((high + 1) - low) + low;
+}
+
 void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIONNÉ
 {
     if (imageCapture->isReadyForCapture() == true) {
@@ -182,15 +189,42 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
            rec->setPixmap(photob);
        }
 
-        QSqlQuery query;
-        query.exec("INSERT INTO mesures (date) VALUES (CURRENT_TIMESTAMP)");            //IL FAUT INCLURE LE CHEMIN DE L'IMAGE
+       //GÉNÉRATEUR DE CHIFFRE ALÉATOIRE
+       QTime time1 = QTime::currentTime();
+       qsrand((uint)time1.msec());
+
+       // VALEUR ALÉATOIRE ENTRE 0 ET 50
+       int tempAleatoire = randInt(0,50);
+
+       cout << tempAleatoire << endl;
+
+       delai();
+
+       //GÉNÉRATEUR DE CHIFFRE ALÉATOIRE
+       QTime time2 = QTime::currentTime();
+       qsrand((uint)time2.msec());
+
+       // VALEUR ALÉATOIRE ENTRE 0 ET 100
+       int humAleatoire = randInt(0,100);
+
+       cout << humAleatoire << endl;
+
+       //ENVOIE DU TEMPS ET DES CHIFFRES ALÉATOIRE A LA BDD
+       QSqlQuery query;
+       query.prepare("INSERT INTO mesures (date,temperature,humidite,chemin_image) "
+                     "VALUES (CURRENT_TIMESTAMP,:temp,:humidite,:chemin_image)");
+       query.bindValue(":temp", tempAleatoire);
+       query.bindValue(":humidite", humAleatoire);
+       query.bindValue(":chemin_image", chemin_image_absolu);
+       query.exec();
+
         chemin->setText("Photo prise !");
-        chemin_photo->setText(emplacement->absoluteFilePath(QString("")));
+        chemin_image->setText(emplacement->absoluteFilePath(QString("")));
     }
 
     else {
         chemin->setText("Erreur !");
-        chemin_photo->setText("Erreur !");
+        chemin_image->setText("Erreur !");
 
         QMessageBox msgBox;
         msgBox.setText("Erreur : Probleme de Caméra");
@@ -206,6 +240,8 @@ void rov_quad::lieu_enregistrement()   //ENREGISTRE LE LIEU DANS LA VARIABLE "em
 {
     emplacement = new QDir(choixemplacement.getExistingDirectory(this));
     bouton_capture->setEnabled(true);
+
+    chemin_image_absolu = emplacement->absoluteFilePath(QString(""));
 }
 
 void rov_quad::delai()

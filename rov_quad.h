@@ -19,6 +19,7 @@ public slots:
         void capture();
         void lieu_enregistrement();
         void delai();
+        int randInt(int low, int high);
 
 private :
         int i = 0;
@@ -32,7 +33,8 @@ private :
         QFileDialog choixemplacement;
         QDir *emplacement;
         QLineEdit *chemin;
-        QLineEdit *chemin_photo;
+        QLineEdit *chemin_image;
+        QString chemin_image_absolu;
 
         //TEMPÉRATURE ET HUMIDITÉ
         QLineEdit *HUM;
