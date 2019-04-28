@@ -220,6 +220,10 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
 
         chemin->setText("Photo prise !");
         chemin_image->setText(emplacement->absoluteFilePath(QString("")));
+        QString tempAl = QString::number(tempAleatoire);
+        QString humAl = QString::number(humAleatoire);
+        TEMP->setText(tempAl);
+        HUM->setText(humAl);
     }
 
     else {
