@@ -132,6 +132,7 @@ rov_quad::rov_quad(QWidget *parent)
     //SIGNAUX ET SLOTS
     QObject::connect(bouton_capture, SIGNAL(clicked()), this, SLOT(capture()));
     QObject::connect(bouton_sauv, SIGNAL(clicked()), this, SLOT(lieu_enregistrement()));
+
 }
 rov_quad::~rov_quad(){
 
@@ -177,6 +178,8 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
            photob.scaled(QSize(320,180),Qt::KeepAspectRatio);
            rec->setPixmap(photob);
        }
+
+
 
        //GÉNÉRATEUR DE CHIFFRE ALÉATOIRE
        QTime time1 = QTime::currentTime();
