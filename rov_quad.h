@@ -19,10 +19,10 @@ public slots:
         void capture();
         void lieu_enregistrement();
         void delai();
-        int randInt(int low, int high);
+        int randInt(int min, int max);
 
 private :
-        int i = 0;
+        int i = 1;
         //TOUT FONCTIONNE
         QPushButton *bouton_capture;
         QPushButton *bouton_sauv;
@@ -32,8 +32,6 @@ private :
         QCameraImageCapture *mCameraImageCapture;
         QFileDialog choixemplacement;
         QDir *emplacement;
-        QLineEdit *chemin;
-        QLineEdit *chemin_image;
         QString chemin_image_absolu;
 
         //TEMPÉRATURE ET HUMIDITÉ
