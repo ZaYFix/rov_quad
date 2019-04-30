@@ -5,7 +5,6 @@
 #include <QCameraViewfinder>
 #include <QCameraImageCapture>
 #include <QPushButton>
-#include <QFrame>
 #include <QTime>
 #include <iostream>
 using namespace std;
@@ -22,10 +21,7 @@ rov_quad::rov_quad(QWidget *parent)
 
 
     if (db.open()) {
-        /*  DEBUG
-        QMessageBox msgBox;
-        msgBox.setText("DBB OK");
-        msgBox.exec();*/
+        qDebug() << "Connection à la bdd ok" << endl;
     }
 
     else {
@@ -40,8 +36,8 @@ rov_quad::rov_quad(QWidget *parent)
     }
 
     //TAILLE DE LA FENÊTRE
-    setMinimumSize(1100,650);
-    setMaximumSize(1100,650);
+    setMinimumSize(1000,580);
+    setMaximumSize(1000,580);
 
     //CHANGEMENT GRAPHIQUE DE LA FENËTRE
     setStyleSheet("QMainWindow { background-color: #ffffff }");
@@ -52,8 +48,8 @@ rov_quad::rov_quad(QWidget *parent)
     //CRÉATION ÉCRAN CAMERA
     QCamera *camera=new QCamera;
     QCameraViewfinder *viewfinder=new QCameraViewfinder(this);
-    viewfinder->resize(716,537);
-    viewfinder->move(350,50);
+    viewfinder->resize(716,480);
+    viewfinder->move(300,30);
 
     camera->setViewfinder(viewfinder);
 
@@ -64,52 +60,45 @@ rov_quad::rov_quad(QWidget *parent)
 
     //BOUTON POUR PRENDRE UNE PHOTO
     bouton_capture=new QPushButton("Capture",this);
-    bouton_capture->move(960,605);
+    bouton_capture->move(830,535);
+    bouton_capture->resize(120,30);
     bouton_capture->setEnabled(false);
     bouton_capture->setStyleSheet("fusion");
 
     //BOUTON POUR CHOISIR LE LIEU DE DESTINATION
     bouton_sauv=new QPushButton ("Lieu de destination",this);
-    bouton_sauv->move(960,10);
+    bouton_sauv->move(670,535);
+    bouton_sauv->resize(120,30);
 
     //HUMIDITÉ
     HUM=new QLineEdit(this);
     HUM->resize(50,20);
-    HUM->move(557,610);
+    HUM->move(557,540);
 
     humidite1=new QLabel(this);
     humidite1->setText("Humidité :");
     humidite1->resize(150,20);
-    humidite1->move(500,610);
+    humidite1->move(500,540);
 
     humidite2=new QLabel(this);
     humidite2->setText("%");
-    humidite2->resize(150,20);
-    humidite2->move(610,610);
+    humidite2->resize(20,20);
+    humidite2->move(610,540);
 
     //TEMPERATURE
     TEMP=new QLineEdit(this);
     TEMP->resize(50,20);
-    TEMP->move(395,610);
+    TEMP->move(395,540);
 
     temperature1=new QLabel(this);
     temperature1->setText("Température :");
     temperature1->resize(200,20);
-    temperature1->move(320,610);
+    temperature1->move(320,540);
 
     temperature2=new QLabel(this);
     temperature2->setText("°C");
-    temperature2->resize(200,20);
-    temperature2->move(450,610);
-
-    //CHEMINS
-    chemin=new QLineEdit(this);
-    chemin->resize(250,30);
-    chemin->move(10,600);
-
-    chemin_image=new QLineEdit(this);
-    chemin_image->resize(250,30);
-    chemin_image->move(10,560);
+    temperature2->resize(20,20);
+    temperature2->move(450,540);
 
     //PIXMAP
     rec = new QLabel(this);
@@ -148,10 +137,10 @@ rov_quad::~rov_quad(){
 
 }
 
-int rov_quad::randInt(int low, int high)
+int rov_quad::randInt(int min, int max)
 {
-// Random number between low and high
-return qrand() % ((high + 1) - low) + low;
+//GÉNÈRE UN CHIFFRE ALÉATOIRE ENTRE MIN ET MAX
+return qrand() % ((max + 1) - min) + min;
 }
 
 void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIONNÉ
@@ -194,9 +183,10 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
        qsrand((uint)time1.msec());
 
        // VALEUR ALÉATOIRE ENTRE 0 ET 50
-       int tempAleatoire = randInt(0,50);
+       double tempAleatoire = randInt(0,500);
+       tempAleatoire = tempAleatoire /10;
 
-       cout << tempAleatoire << endl;
+       //cout << tempAleatoire << endl;
 
        delai();
 
@@ -205,9 +195,10 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
        qsrand((uint)time2.msec());
 
        // VALEUR ALÉATOIRE ENTRE 0 ET 100
-       int humAleatoire = randInt(0,100);
+       double humAleatoire = randInt(0,1000);
+       humAleatoire = humAleatoire /10;
 
-       cout << humAleatoire << endl;
+       //cout << humAleatoire << endl;
 
        //ENVOIE DU TEMPS ET DES CHIFFRES ALÉATOIRE A LA BDD
        QSqlQuery query;
@@ -218,8 +209,6 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
        query.bindValue(":chemin_image", chemin_image_absolu);
        query.exec();
 
-        chemin->setText("Photo prise !");
-        chemin_image->setText(emplacement->absoluteFilePath(QString("")));
         QString tempAl = QString::number(tempAleatoire);
         QString humAl = QString::number(humAleatoire);
         TEMP->setText(tempAl);
@@ -227,8 +216,6 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
     }
 
     else {
-        chemin->setText("Erreur !");
-        chemin_image->setText("Erreur !");
 
         QMessageBox msgBox;
         msgBox.setText("Erreur : Probleme de Caméra");
