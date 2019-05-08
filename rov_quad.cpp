@@ -109,8 +109,6 @@ rov_quad::rov_quad(QWidget *parent)
     pixini->fill();
     rec->setPixmap(*pixini);
 
-    QObject::connect(rec, SIGNAL( clicked() ), this, SLOT( slotClicked() ) );
-
     rec2 = new QLabel(this);
     rec2->move(20,20);
     rec2->setFixedSize(240,160);
@@ -247,14 +245,4 @@ void rov_quad::delai()
     QTime dieTime= QTime::currentTime().addMSecs(500);
     while( QTime::currentTime() < dieTime )
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-}
-
-void rov_quad::slotClicked()
-{
-    qDebug()<<"Clicked";
-}
-
-void rov_quad::mousePressEvent ( QMouseEvent * event )
-{
-    emit clicked();
 }
