@@ -6,6 +6,7 @@
 #include <QCameraImageCapture>
 #include <QPushButton>
 #include <QTime>
+#include <QDateTime>
 #include <iostream>
 using namespace std;
 
@@ -108,6 +109,8 @@ rov_quad::rov_quad(QWidget *parent)
     pixini->fill();
     rec->setPixmap(*pixini);
 
+    QObject::connect(rec, SIGNAL( clicked() ), this, SLOT( slotClicked() ) );
+
     rec2 = new QLabel(this);
     rec2->move(20,20);
     rec2->setFixedSize(240,160);
@@ -149,7 +152,8 @@ void rov_quad::capture()   //CAPTURE ET ENREGISTRE L'IMAGE DANS LE LIEU SELECTIO
     if (imageCapture->isReadyForCapture() == true) {
 
         i = i + 1;
-        QString s = QString::number(i);
+        //QString s = QString::number(i);              DAY/MONTH/YEAR/HOURS/MINUTES/SECONDS
+        QString s = QDateTime::currentDateTime().toString("dd_MM_yyyy_h'H'_mm'm'_ss's'");
 
        imageCapture->capture(emplacement->absoluteFilePath(QString(s)));
 
@@ -243,4 +247,14 @@ void rov_quad::delai()
     QTime dieTime= QTime::currentTime().addMSecs(500);
     while( QTime::currentTime() < dieTime )
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void rov_quad::slotClicked()
+{
+    qDebug()<<"Clicked";
+}
+
+void rov_quad::mousePressEvent ( QMouseEvent * event )
+{
+    emit clicked();
 }
